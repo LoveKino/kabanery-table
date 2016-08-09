@@ -1,43 +1,74 @@
 'use strict';
 
 let {
+    map, forEach
+} = require('bolzano');
+
+let {
     n, view
 } = require('kabanery');
 
 /**
  * tableData = {
  *      head: [],
- *      body: [[]]
+ *      body: [{
+ *          name: value
+ *      }],
+ *      foot,
+ *      enableChosen,
+ *      chosenPropName
  * }
  *
+ * TODO type
  */
-module.exports = view((tableData = {}) => {
-    let head = tableData.head;
-    let body = tableData.body;
-    let foot = tableData.foot;
 
-    let tableStyles = tableData.tableStyles || {};
+module.exports = view(({
+    head, body, enableChosen, headChosen,
+    tableStyles = {}, chosenPropName = 'chosen', onchangeItemPropName = 'onchange'
+} = {}, {
+    update
+}) => {
+    let heads = map(head, (item) => n('th', item));
+    if (enableChosen) {
+        headChosen = !!headChosen;
+        heads.unshift(n('th', n(`input type=checkbox ${headChosen? 'checked=true': ''}`, {
+            onclick: () => {
+                headChosen = !headChosen;
+                forEach(body, (raw) => {
+                    changeChosenItem(raw, headChosen);
+                });
+                update('headChosen', headChosen);
+            }
+        })));
+    }
+
+    let changeChosenItem = (raw, v) => {
+        raw[chosenPropName] = v;
+        let onchangeHandler = raw[onchangeItemPropName];
+        onchangeHandler && onchangeHandler(raw);
+    };
 
     return n('table', tableStyles, [
-        head && n('thead', n('tr', renderHeads(head))),
-        body && n('tbody', renderRows(body)),
+        head && n('thead', n('tr', heads)),
 
-        foot && n('tfoot', renderRow(foot))
+        body && n('tbody', map(body, (raw) => {
+            let line = map(head, (name) => {
+                let value = raw[name];
+                return n('td', value);
+            });
+
+            raw[chosenPropName] = !!raw[chosenPropName];
+            if (enableChosen) {
+                line.unshift(
+                    n('td', n(`input type=checkbox ${raw[chosenPropName]? 'checked=true': ''}`, {
+                        onclick: () => {
+                            changeChosenItem(raw, !raw[chosenPropName]);
+                        }
+                    }))
+                );
+            }
+
+            return n('tr', line);
+        }))
     ]);
 });
-
-let renderRows = (rows) => renderList(rows, 'tr', renderRow);
-
-let renderRow = (row) => renderList(row, 'td');
-
-let renderHeads = (row) => renderList(row, 'th');
-
-let id = v => v;
-
-let renderList = (list, tagName, handler = id) => {
-    let nlist = [];
-    for (let i = 0; i < list.length; i++) {
-        nlist.push(n(tagName, handler(list[i])));
-    }
-    return nlist;
-};

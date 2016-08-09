@@ -21,6 +21,7 @@
     },
     "homepage": "https://github.com/LoveKino/kabanery-table#readme",
     "link_dependencies": {
-        "kabanery": "~0.0.1"
+        "kabanery": "~0.0.1",
+        "bolzano": "~0.0.1"
     }
 }
