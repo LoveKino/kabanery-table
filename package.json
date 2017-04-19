@@ -1,6 +1,6 @@
 {
   "name": "kabanery-table",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "table widget for kabanery framework",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,6 @@
   "homepage": "https://github.com/LoveKino/kabanery-table#readme",
   "dependencies": {
     "bolzano": "0.0.1",
-    "kabanery": "^0.1.0"
+    "kabanery": "^0.1.8"
   }
 }
