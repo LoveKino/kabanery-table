@@ -1,6 +1,6 @@
 {
   "name": "kabanery-table",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "table widget for kabanery framework",
   "main": "index.js",
   "scripts": {
